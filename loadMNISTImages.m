@@ -22,5 +22,4 @@ fclose(fp);
 images = reshape(images, size(images, 1) * size(images, 2), size(images, 3));
 % Convert to double and rescale to [0,1]
 %images = double(images) / 255;
-
 end
