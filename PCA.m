@@ -17,6 +17,8 @@ covOfTraining = cov(trainingMat);
 
 %eigenVectorsMat = transpose(eigenVectorsMat);
 
+
+
 eigenValueVec = diag(eigenValueVec);
 
 %imshow( reshape(10*eigenVectorsMat(:,5),[28 28]) )
@@ -37,18 +39,21 @@ for numOfEigenVecs = 55:1:55
        % build Logistic model
        subTrainingLabels(trainingLabels == modelIndex) = 1;
        subTrainingLabels(trainingLabels ~= modelIndex) = 0;
-       %subTestingLabels(testingLabels == modelIndex) = 1;
-       %subTestingLabels(testingLabels ~= modelIndex) = 0;
+       subTestingLabels(testingLabels == modelIndex) = 1;
+       subTestingLabels(testingLabels ~= modelIndex) = 0;
        %model = glmfit(projectedTraining, subTrainingLabels);
        model = glmfit(projectedTraining, subTrainingLabels);
        scores = glmval(model,projectedTesting,'logit');
-       [X, Y, T] = perfcurve(testingLabels,scores,1);
+       [X, Y, T] = perfcurve(subTestingLabels,scores,1);
+       legendInfo{modelIndex+1} = num2str(modelIndex);
        hold on 
-       plot(X,Y);
+       graphROC =  plot(X,Y);
        hold off
        prediction(:,modelIndex+1) = glmval(model,projectedTesting,'logit');
    end
 end
+
+legend(graphROC,legendInfo);
 
 [M, I] = max(prediction, [], 2);
 
