@@ -23,7 +23,9 @@ eigenValueVec = diag(eigenValueVec);
 
 subTrainingLabels = transpose(zeros(1,length(trainingLabels)));
 
-for numOfEigenVecs = 1:1:15
+prediction = zeros(length(testingMat),10);
+
+for numOfEigenVecs = 99:1:100
    projectedTraining = trainingMat * eigenVectorsMat(:,length(eigenVectorsMat)-numOfEigenVecs:length(eigenVectorsMat));
    projectedTraining = projectedTraining - min(projectedTraining(:));
    projectedTraining = projectedTraining ./ max(projectedTraining(:));
@@ -35,8 +37,14 @@ for numOfEigenVecs = 1:1:15
        subTrainingLabels(trainingLabels == modelIndex) = 1;
        subTrainingLabels(trainingLabels ~= modelIndex) = 0;
        model = glmfit(projectedTraining, subTrainingLabels);
-       class = glmval(model,projectedTesting,'logit') > 0.5;
+       prediction(:,modelIndex+1) = glmval(model,projectedTesting,'logit');
    end
 end
+
+[M, I] = max(prediction, [], 2);
+
+I = I-1
+
+sum(I==testingLabels)/length(testingLabels) * 100
 
 disp('ended');
